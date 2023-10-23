@@ -1,0 +1,20 @@
+{
+  "name": "Z-Auth-1.0",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.3.1",
+    "express-rate-limit": "^7.0.2",
+    "mongoose": "^7.5.3",
+    "nodemailer": "^6.9.6"
+  }
+}
