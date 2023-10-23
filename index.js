@@ -5,6 +5,7 @@ import { connect } from "mongoose";
 import { OAuth2Client } from 'google-auth-library';
 import axios from'axios';
 import dotenv from "dotenv";
+import cors from'cors';
 dotenv.config();
 import User from "./formats/usr.js"; // Import the User model
 import { ConvertToHash, Login_Token_Generator, VerifyPassword, check_cred, generateOTP, sendOTPByEmail } from "./zlib.js";
@@ -176,7 +177,7 @@ const port = 17001;
 
 app.use(bodyParser.json());
 app.use(limiter);
-
+app.use(cors());
 
 app.get('/', async (req, res) => {
   res.status(200).json({ message: 'WPICO API' });
