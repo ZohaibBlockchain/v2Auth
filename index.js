@@ -2,6 +2,7 @@ import express from "express";
 import rateLimit from 'express-rate-limit';
 import bodyParser from "body-parser";
 import { connect } from "mongoose";
+import { OAuth2Client } from 'google-auth-library';
 import dotenv from "dotenv";
 dotenv.config();
 import User from "./formats/usr.js"; // Import the User model
@@ -18,7 +19,7 @@ const MONGODB_URI = `mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB
 
 
 // Connection URL and database name
-const url = MONGODB_HOST + ":" + MONGODB_PORT ;
+const url = MONGODB_HOST + ":" + MONGODB_PORT;
 
 
 
@@ -184,7 +185,7 @@ app.get('/', async (req, res) => {
 
 
 // Signup route
-app.post('/wpico/api/signup', async (req, res) => {
+app.post('/wcipo/api/signup', async (req, res) => {
   const { email, password } = req.body;
 
   const r = await RNU(email, password);
@@ -196,7 +197,7 @@ app.post('/wpico/api/signup', async (req, res) => {
 });
 
 
-app.post('/wpico/api/signin', async (req, res) => {
+app.post('/wcipo/api/signin', async (req, res) => {
   const { email, password } = req.body;
   try {
     const status = await Login(email, password);
@@ -213,7 +214,7 @@ app.post('/wpico/api/signin', async (req, res) => {
 
 
 // SpecialRequest route
-app.post('/wpico/api/sr', async (req, res) => {
+app.post('/wcipo/api/sr', async (req, res) => {
   const { code } = req.body;
   const currentTime = Date.now();
   const _user = specialRq.filter(user => user.code === code && user.expiryTime > currentTime)
@@ -247,6 +248,56 @@ app.post('/wpico/api/sr', async (req, res) => {
     return res.status(400).json({ message: 'Invalid or Expire Code' });
   }
 });
+
+
+
+
+
+const CLIENT_ID = '733590142223-tt4sdfibpbjh168g4kbkgkdtprf8dsu2.apps.googleusercontent.com'; // Get this from Google Cloud Console
+const CLIENT_SECRET = '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'; // Keep this secret
+const REDIRECT_URI = 'http://localhost:3000'; // This should match the one you set in Google Cloud Console
+
+const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
+const oAuth2Client = new OAuth2Client(CLIENT_ID);
+
+app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
+  const code = req.body.code;
+
+  try {
+    // Exchange the authorization code for tokens
+    const tokenResponse = await axios.post(GOOGLE_TOKEN_URL, {
+      code: code,
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      redirect_uri: REDIRECT_URI,
+      grant_type: 'authorization_code'
+    });
+
+    const idToken = tokenResponse.data.id_token;
+
+    // Verify the ID token
+    const ticket = await oAuth2Client.verifyIdToken({
+      idToken: idToken,
+      audience: CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
+    });
+
+    const payload = ticket.getPayload();
+    const userId = payload['sub']; // This is the Google user ID
+    const email = payload['email'];
+
+    // TODO: Authenticate the user in your system using the above details.
+    // Possibly create a session, issue your own JWT, etc.
+    console.log(email);
+    res.json({ success: true, email: email });
+
+  } catch (error) {
+    console.error("Authentication error:", error);
+    res.status(401).json({ success: false, message: "Authentication failed" });
+  }
+});
+
+
+
 
 
 // Start the server
