@@ -293,12 +293,12 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
     const exits = await User.find({ email: email });
     console.log(exits);
 
-    const newUser = new User({
-      email: email.toLowerCase(),
-      password: await ConvertToHash(password),
-      accountStatus: false,
-    });
-    await newUser.save();
+    // const newUser = new User({
+    //   email: email.toLowerCase(),
+    //   password: await ConvertToHash(password),
+    //   accountStatus: false,
+    // });
+    // await newUser.save();
 
 
 
