@@ -291,7 +291,14 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
     //check user in database
 
     const exits = await User.find({ email: email });
-    console.log(exits);
+    
+    if(console.log(exits))
+    {
+      console.log('Login Now');
+    }else{
+      console.log('register Now');
+    }
+
 
     // const newUser = new User({
     //   email: email.toLowerCase(),
