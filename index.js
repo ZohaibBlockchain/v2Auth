@@ -305,9 +305,9 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
           accountStatus: true,
         });
 
-        let res = await newUser.save();
+        let _res = await newUser.save();
         const expiryTime = Date.now() + 30 * 60 * 1000; // 30 minutes from now
-        const token = Login_Token_Generator(res.email, res.password, expiryTime.toString());
+        const token = Login_Token_Generator(_res.email, _res.password, expiryTime.toString());
         User_list.push({ email: email.toLowerCase(), token: token, expiryTime: expiryTime });
         res.status(200).json({ message: { token: token, message: "Sign-in successful" }});
       } catch (error) {
