@@ -29,7 +29,7 @@ export function check_cred(email, password) {
         return { status: false, message: "Password contains non acceptable special characters" }
     }
 
-    // Check if username is at least 6 characters long
+    // Check if email is at least 6 characters long
     if (email.length < 6) {
         return { status: false, message: "email too short" }
     }

@@ -195,7 +195,7 @@ app.post('/wcipo/api/signup', async (req, res) => {
   if (r.status) {
     return res.status(400).json({ message: r.message });
   } else {
-    res.status(200).json({ message: r.message });
+    res.status(200).json({success: true, message: r.message });
   }
 });
 
