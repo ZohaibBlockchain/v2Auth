@@ -302,8 +302,9 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
         password: await ConvertToHash(123),
         accountStatus: true,
       });
-      await newUser.save();
-
+     let res = await newUser.save();
+     console.clear(); 
+     console.log(res);
 
 
     }
