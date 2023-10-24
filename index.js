@@ -134,8 +134,9 @@ async function Login(email, password) {
         } else {
           console.log(email, users)
           User_list.push({ email: email.toLowerCase(), token: token, expiryTime: expiryTime });
+          return { message: { token: token, message: "Sign-in successful" }, res: res };
         }
-        return { message: { token: token, message: "Sign-in successful" }, res: res };
+        
       } else {
         console.error("Password incorrect");
         return { message: { message: "Password incorrect" }, res: false };
@@ -297,14 +298,34 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
     } else {
       console.log('register Now');
 
-      const newUser = new User({
-        email: email.toLowerCase(),
-        password: await ConvertToHash('googleUser'),
-        accountStatus: true,
-      });
-     let res = await newUser.save();
-     console.clear(); 
-     console.log(res);
+      try {
+        const newUser = new User({
+          email: email.toLowerCase(),
+          password: await ConvertToHash('googleUser'),
+          accountStatus: true,
+        });
+
+        let res = await newUser.save();
+        const expiryTime = Date.now() + 30 * 60 * 1000; // 30 minutes from now
+        const token = Login_Token_Generator(res.email, res.password, expiryTime.toString());
+        User_list.push({ email: email.toLowerCase(), token: token, expiryTime: expiryTime });
+        res.status(200).json({ message: { token: token, message: "Sign-in successful" }});
+      } catch (error) {
+        if (error.code === 11000) {
+          // Duplicate key error (username is not unique)
+          console.error("Email already registered:", error.message);
+          verified.message = 'Email already registered';
+          verified.status = false;
+          res.status(401).json({ success: false, message: "Authentication failed" });
+        } else {
+          console.error("Error saving user:", error);
+          verified.message = 'Error saving user';
+          verified.status = false;
+          res.status(401).json({ success: false, message: "Authentication failed" });
+        }
+      }
+
+
     }
 
 
