@@ -3,9 +3,9 @@ import rateLimit from 'express-rate-limit';
 import bodyParser from "body-parser";
 import { connect } from "mongoose";
 import { OAuth2Client } from 'google-auth-library';
-import axios from'axios';
+import axios from 'axios';
 import dotenv from "dotenv";
-import cors from'cors';
+import cors from 'cors';
 dotenv.config();
 import User from "./formats/usr.js"; // Import the User model
 import { ConvertToHash, Login_Token_Generator, VerifyPassword, check_cred, generateOTP, sendOTPByEmail } from "./zlib.js";
@@ -287,8 +287,22 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
     const userId = payload['sub']; // This is the Google user ID
     const email = payload['email'];
 
-    // TODO: Authenticate the user in your system using the above details.
-    // Possibly create a session, issue your own JWT, etc.
+
+    //check user in database
+
+    const exits = await User.find({ email: email });
+    console.log(exits);
+
+    const newUser = new User({
+      email: email.toLowerCase(),
+      password: await ConvertToHash(password),
+      accountStatus: false,
+    });
+    await newUser.save();
+
+
+
+
     console.log(email);
     res.json({ success: true, email: email });
 
