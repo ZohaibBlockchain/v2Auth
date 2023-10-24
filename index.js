@@ -287,14 +287,22 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
     const payload = ticket.getPayload();
     const userId = payload['sub']; // This is the Google user ID
     const email = payload['email'];
-
-
+    
     //check user in database
-
     const users = await User.find({ email: email });
-
     if (users.length > 0) {
       console.log('Login Now');
+      if (User_list.length > 0) {
+        const filteredUsers = User_list.filter(user => user.email === email.toLowerCase());
+        if (filteredUsers.length > 0) {
+          res.status(401).json({ success: false, message: "Already Signed In" });
+        }
+      }else{
+        const expiryTime = Date.now() + 30 * 60 * 1000; // 30 minutes from now
+        const token = Login_Token_Generator(users.email, users.password, expiryTime.toString());
+        User_list.push({ email: email.toLowerCase(), token: token, expiryTime: expiryTime });
+        res.status(200).json({ success: true, message: 'Sign-in successful', token: token });
+      }
     } else {
       console.log('register Now');
 
