@@ -21,7 +21,7 @@ const MONGODB_URI = `mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB
 
 
 // Connection URL and database name
-const url = MONGODB_HOST + ":" + MONGODB_PORT;
+const url = MONGODB_HOST + ":" + MONGODB_PORT + '/' + DATABASE_NAME;
 
 
 
@@ -291,21 +291,25 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
     //check user in database
 
     const users = await User.find({ email: email });
-    
-    if(users.length > 0)
-    {
+
+    if (users.length > 0) {
       console.log('Login Now');
-    }else{
+    } else {
       console.log('register Now');
+
+      const newUser = new User({
+        email: email.toLowerCase(),
+        password: await ConvertToHash(123),
+        accountStatus: true,
+      });
+      await newUser.save();
+
+
+
     }
 
 
-    // const newUser = new User({
-    //   email: email.toLowerCase(),
-    //   password: await ConvertToHash(password),
-    //   accountStatus: false,
-    // });
-    // await newUser.save();
+
 
 
 
