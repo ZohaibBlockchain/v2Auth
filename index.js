@@ -309,6 +309,7 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
         const expiryTime = Date.now() + 30 * 60 * 1000; // 30 minutes from now
         const token = Login_Token_Generator(_res.email, _res.password, expiryTime.toString());
         User_list.push({ email: email.toLowerCase(), token: token, expiryTime: expiryTime });
+
         res.status(200).json({ message: { token: token, message: "Sign-in successful" }});
       } catch (error) {
         if (error.code === 11000) {
@@ -324,18 +325,7 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
           res.status(401).json({ success: false, message: "Authentication failed" });
         }
       }
-
-
     }
-
-
-
-
-
-
-
-    console.log(email);
-    res.json({ success: true, email: email });
 
   } catch (error) {
     console.error("Authentication error:", error);
