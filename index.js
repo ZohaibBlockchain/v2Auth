@@ -193,9 +193,9 @@ app.post('/wcipo/api/signup', async (req, res) => {
 
   const r = await RNU(email, password);
   if (r.status) {
-    return res.status(400).json({ message: r.message });
-  } else {
     res.status(200).json({success: true, message: r.message });
+  } else {
+    res.status(400).json({success: false, message: r.message });
   }
 });
 
