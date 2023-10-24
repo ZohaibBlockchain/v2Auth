@@ -127,16 +127,16 @@ async function Login(email, password) {
           const link = 'https://wpico.com/activaterequest/' + SR.code.toString();
           const confirmation = await sendOTPByEmail(email, link);
           if (confirmation.success) {
-            return { message: { message: "Activation link sended" }, res: res };
+            return { message: "Activation link sended", res: res };
           } else {
-            return { message: { message: "Failed to activate" }, res: res };
+            return { message: "Failed to activate", res: res };
           }
         } else {
           console.log(email, users)
           User_list.push({ email: email.toLowerCase(), token: token, expiryTime: expiryTime });
           return { message: { token: token, message: "Sign-in successful" }, res: res };
         }
-        
+
       } else {
         console.error("Password incorrect");
         return { message: { message: "Password incorrect" }, res: false };
@@ -193,9 +193,9 @@ app.post('/wcipo/api/signup', async (req, res) => {
 
   const r = await RNU(email, password);
   if (r.status) {
-    res.status(200).json({success: true, message: r.message });
+    res.status(200).json({ success: true, message: r.message });
   } else {
-    res.status(400).json({success: false, message: r.message });
+    res.status(400).json({ success: false, message: r.message });
   }
 });
 
@@ -287,7 +287,7 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
     const payload = ticket.getPayload();
     const userId = payload['sub']; // This is the Google user ID
     const email = payload['email'];
-    
+
     //check user in database
     const users = await User.find({ email: email });
     if (users.length > 0) {
@@ -297,7 +297,7 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
         if (filteredUsers.length > 0) {
           res.status(401).json({ success: false, message: "Already Signed In" });
         }
-      }else{
+      } else {
         const expiryTime = Date.now() + 30 * 60 * 1000; // 30 minutes from now
         const token = Login_Token_Generator(users.email, users.password, expiryTime.toString());
         User_list.push({ email: email.toLowerCase(), token: token, expiryTime: expiryTime });
