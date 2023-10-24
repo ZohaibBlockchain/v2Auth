@@ -290,9 +290,9 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
 
     //check user in database
 
-    const users = await User.find({ email: email });
+    const users = await User.ex({ email: email });
     
-    if(console.log(users).length > 0)
+    if(users.length > 0)
     {
       console.log('Login Now');
     }else{
