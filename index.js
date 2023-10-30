@@ -74,7 +74,7 @@ async function RNU(email, password) {
       const link = 'https://wpico.com/activaterequest/' + SR.code.toString();
       const confirmation = await sendOTPByEmail(email, link);
       if (confirmation.success) {
-        return { message:"Activation link sended" , success: true };
+        return { message: "Email activation link sended", success: true };
       } else {
         return { message: "Failed to activate", success: false };
       }
@@ -106,7 +106,7 @@ async function Login(email, password) {
     if (User_list.length > 0) {
       const filteredUsers = User_list.filter(user => user.email === email.toLowerCase());
       if (filteredUsers.length > 0) {
-        return { message: "Already Signed In", res: false };
+        return { message: "Already Signed In", status: false };
       }
     }
 
@@ -127,27 +127,26 @@ async function Login(email, password) {
           const link = 'https://wpico.com/activaterequest/' + SR.code.toString();
           const confirmation = await sendOTPByEmail(email, link);
           if (confirmation.success) {
-            return { message: "Activation link sended" , res: res };
+            return { message: "Activation link sended", status: res };
           } else {
-            return { message: "Failed to activate" , res: res };
+            return { message: "Failed to activate", status: res };
           }
         } else {
           console.log(email, users)
           User_list.push({ email: email.toLowerCase(), token: token, expiryTime: expiryTime });
-          return { message: { token: token, message: "Sign-in successful" }, res: res };
+          return { message: { token: token, message: "Sign-in successful" }, status: res };
         }
-        
+
       } else {
-        console.error("Password incorrect");
-        return { message: { message: "Password incorrect" }, res: false };
+        return { message: "Password incorrect", status: false };
       }
     } else {
       console.error("Email not Registered");
-      return { message: { message: "User not found" }, res: false };
+      return { message: "User not found", status: false };
     }
   } catch (error) {
     console.error("Error finding user:", error);
-    return { message: { message: "Error finding user" }, res: false };
+    return { message: { message: "Error finding user" }, status: false };
   }
 }
 
@@ -193,9 +192,9 @@ app.post('/wcipo/api/signup', async (req, res) => {
 
   const r = await RNU(email, password);
   if (r.success) {
-    res.status(200).json({success: true, message: r.message });
+    res.status(200).json({ success: true, message: r.message });
   } else {
-    res.status(400).json({success: false, message: r.message });
+    res.status(400).json({ success: false, message: r.message });
   }
 });
 
@@ -205,12 +204,13 @@ app.post('/wcipo/api/signin', async (req, res) => {
   try {
     const status = await Login(email, password);
 
-    if (!status.res) {
-      return res.status(400).json({ message: status.message });
+    if (!status.status) {
+      res.status(400).json({ message: status.message });
+      return;
+    } else {
+      res.status(200).json(status.message);
     }
-    res.status(200).json(status.message);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -287,7 +287,7 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
     const payload = ticket.getPayload();
     const userId = payload['sub']; // This is the Google user ID
     const email = payload['email'];
-    
+
     //check user in database
     const users = await User.find({ email: email });
     if (users.length > 0) {
@@ -297,7 +297,7 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
         if (filteredUsers.length > 0) {
           res.status(401).json({ success: false, message: "Already Signed In" });
         }
-      }else{
+      } else {
         const expiryTime = Date.now() + 30 * 60 * 1000; // 30 minutes from now
         const token = Login_Token_Generator(users.email, users.password, expiryTime.toString());
         User_list.push({ email: email.toLowerCase(), token: token, expiryTime: expiryTime });
