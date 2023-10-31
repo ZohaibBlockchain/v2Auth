@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 import cors from 'cors';
 dotenv.config();
 import User from "./formats/usr.js"; // Import the User model
-import { ConvertToHash, Login_Token_Generator, VerifyPassword, check_cred, generateOTP, sendOTPByEmail } from "./zlib.js";
+import { ConvertToHash, Login_Token_Generator, VerifyPassword, check_cred, generateOTP, sendOTPByEmail, FP_OTP, expiryFx } from "./zlib.js";
 const MONGODB_HOST = process.env.DB_HOST;
 const MONGODB_PORT = process.env.DB_PORT;
 const DATABASE_NAME = process.env.DB_NAME;
@@ -37,6 +37,8 @@ const limiter = rateLimit({
 
 //Object Format {email,token,expiryTime}
 let User_list = [];
+
+let FP_Users_list = [];
 
 
 //Object Format {email,code,token,expiryTime}
@@ -141,7 +143,6 @@ async function Login(email, password) {
         return { message: "Password incorrect", status: false };
       }
     } else {
-      console.error("Email not Registered");
       return { message: "User not found", status: false };
     }
   } catch (error) {
@@ -159,6 +160,15 @@ function authEngine() {
       console.log(user.email + ' Status Online');
     });
   }
+
+  if (FP_Users_list != undefined) {
+    FP_Users_list = FP_Users_list.filter(user => user.expiryTime > Date.now());
+  }
+
+
+
+
+
   setTimeout(authEngine, 1500);
 }
 
@@ -341,6 +351,77 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
 });
 
 
+
+app.post('/wcipo/api/pr/otp', async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email: email });
+    if (user) {
+      const result = await FP_OTP(email);
+      if (result.success) {
+        FP_Users_list.push({ email: email, otp: result.code, expiryTime: expiryFx(5) })
+        res.status(200).json({ success: true, message: 'OTP sent successful' });
+      } else {
+        res.status(500).json({ message: 'Internal server error' });
+      }
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+app.post('/wcipo/api/pr/otp/check', async (req, res) => {
+  const { otp } = req.body;
+  try {
+    const exists = FP_Users_list.some((element) => element.otp === otp);
+    if (Boolean(exists)) {
+      res.status(200).json({ success: true, message: 'OTP check successful' });
+    } else {
+      res.status(400).json({ success: false, message: 'Invalid code' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
+
+
+app.post('/wcipo/api/setpassword', async (req, res) => {
+  const { otp, password } = req.body;
+  try {
+    const exists = FP_Users_list.some((element) => element.otp === otp);
+    if (Boolean(exists)) {
+      try {
+        const hashedPassword = await ConvertToHash(password);
+        const result = await User.update(
+          { password: hashedPassword },
+          { where: { email: exists.email } }
+        );
+
+        if (result[0] === 0) {
+          // No records were updated, handle accordingly
+          if (FP_Users_list != undefined) {
+            FP_Users_list = FP_Users_list.filter(user => user.email !== exists.email);
+          }
+          res.status(400).json({ success: false, message: 'No records were updated' });
+        } else {
+          // Record successfully updated
+          if (FP_Users_list != undefined) {
+            FP_Users_list = FP_Users_list.filter(user => user.email !== exists.email);
+          }
+          res.status(200).json({ success: true, message: 'Password Updated' });
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+      }
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
 
 
 

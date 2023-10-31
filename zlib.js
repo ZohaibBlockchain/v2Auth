@@ -104,23 +104,63 @@ export function generateOTP() {
     return Math.floor(100000000000 + Math.random() * 900000000000);
 }
 
+
+
+// Generate a random 6-digit OTP
+export function generate_FP_OTP() {
+    return Math.floor(100000 + Math.random() * 900000);
+}
+
+
+
 // Function to send OTP via email
+
 export async function sendOTPByEmail(email, link) {
-    // Email configuration
+
+
     const mailOptions = {
-      from: 'support@wcipo.com', // Sender's email address
-      to: email,
-      subject: 'OTP Verification',
-      text: `Your WPICO Account Activation link is: ${link}`,
+        from: 'support@wcipo.com', // Sender's email address
+        to: email,
+        subject: 'OTP Verification',
+        text: `Your WPICO Account Activation link is: ${link}`,
     };
-  
+
     try {
-      // Send OTP via email
-      const info = await transporter.sendMail(mailOptions);
-      console.log('Email sent: ' + info.response);
-      return { success: true, message: 'OTP sent successfully' };
+        // Send OTP via email
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent: ' + info.response);
+        return { success: true, message: 'OTP sent successfully' };
     } catch (error) {
-      console.error(error);
-      return { success: false, message: 'Error sending OTP' };
+        console.error(error);
+        return { success: false, message: 'Error sending OTP' };
     }
-  }
+}
+
+
+
+export async function FP_OTP(email) {
+
+    const code = Math.floor(100000 + Math.random() * 900000);
+
+    const mailOptions = {
+        from: 'support@wcipo.com', // Sender's email address
+        to: email,
+        subject: 'OTP for forgot password',
+        text: `Your One time password for set new password : ${code}`,
+    };
+
+    try {
+        // Send OTP via email
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent: ' + info.response);
+        return { success: true, message: 'OTP sent successfully', code: code };
+    } catch (error) {
+        console.error(error);
+        return { success: false, message: 'Error sending OTP', code: code };
+    }
+}
+
+
+export function expiryFx(minutes) {
+    return expiryTime = Date.now() + minutes * 60 * 1000;
+}
