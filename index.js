@@ -17,9 +17,6 @@ const MONGODB_PASSWORD = encodeURIComponent(process.env.MONGODB_PASSWORD);
 const MONGODB_URI = `mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${DATABASE_NAME}`;
 
 
-
-
-
 // Connection URL and database name
 const url = MONGODB_HOST + ":" + MONGODB_PORT + '/' + DATABASE_NAME;
 
@@ -29,11 +26,7 @@ const url = MONGODB_HOST + ":" + MONGODB_PORT + '/' + DATABASE_NAME;
 
 
 
-const limiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 30, // Max requests per minute
-  message: 'Rate limit exceeded. Please try again later.',
-});
+
 
 //Object Format {email,token,expiryTime}
 let User_list = [];
@@ -182,12 +175,32 @@ authEngine();
 
 
 
+
+
+
+
+//Express------------------------------------------------
+
+
 const app = express();
 const port = 17001;
-
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 30, // Max requests per minute
+  message: 'Rate limit exceeded. Please try again later.',
+});
 app.use(bodyParser.json());
 app.use(limiter);
 app.use(cors());
+app.set('trust proxy', 1);
+
+
+
+
+
+
+
+
 
 app.get('/', async (req, res) => {
   res.status(200).json({ message: 'WPICO API' });
