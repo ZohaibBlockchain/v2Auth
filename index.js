@@ -210,7 +210,7 @@ app.get('/', async (req, res) => {
 
 
 // Signup route
-app.post('/wcipo/api/signup', async (req, res) => {
+app.post('/api/signup', async (req, res) => {
   const { email, password } = req.body;
 
   const r = await RNU(email, password);
@@ -240,7 +240,7 @@ app.post('/wcipo/api/signin', async (req, res) => {
 
 
 // SpecialRequest route
-app.post('/wcipo/api/sr', async (req, res) => {
+app.post('/api/sr', async (req, res) => {
   const { code } = req.body;
   const currentTime = Date.now();
   const _user = specialRq.filter(user => user.code === code && user.expiryTime > currentTime)
@@ -286,7 +286,7 @@ const REDIRECT_URI = 'http://localhost:3000'; // This should match the one you s
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const oAuth2Client = new OAuth2Client(CLIENT_ID);
 
-app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
+app.post('/api/gsi/authenticate', async (req, res) => {
   const code = req.body.code;
 
   try {
@@ -365,7 +365,7 @@ app.post('/wcipo/api/gsi/authenticate', async (req, res) => {
 
 
 
-app.post('/wcipo/api/pr/otp', async (req, res) => {
+app.post('/api/pr/otp', async (req, res) => {
   const { email } = req.body;
   try {
     const user = await User.findOne({ email: email });
@@ -385,7 +385,7 @@ app.post('/wcipo/api/pr/otp', async (req, res) => {
 
 
 
-app.post('/wcipo/api/pr/otp/check', async (req, res) => {
+app.post('/api/pr/otp/check', async (req, res) => {
   const { otp } = req.body;
   try {
     const exists = FP_Users_list.some((element) => element.otp === otp);
@@ -401,7 +401,7 @@ app.post('/wcipo/api/pr/otp/check', async (req, res) => {
 
 
 
-app.post('/wcipo/api/setpassword', async (req, res) => {
+app.post('/api/setpassword', async (req, res) => {
   const { otp, password } = req.body;
   try {
     const exists = FP_Users_list.some((element) => element.otp === otp);
