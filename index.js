@@ -156,13 +156,14 @@ function authEngine() {
 
   if (FP_Users_list != undefined) {
     FP_Users_list = FP_Users_list.filter(user => user.expiryTime > Date.now());
+    console.log(FP_Users_list);
   }
 
 
 
 
 
-  setTimeout(authEngine, 1500);
+  setTimeout(authEngine, 3000);
 }
 
 authEngine();
@@ -392,12 +393,8 @@ app.post('/api/pr/otp', async (req, res) => {
 app.post('/api/pr/otp/check', async (req, res) => {
   const { otp } = req.body;
   try {
-
-    const _otp =  parseInt(otp,10);  
-    console.log(typeof(FP_Users_list[0].otp),typeof(_otp));
-    console.log(_otp);
+    const _otp = parseInt(otp, 10);
     const exists = FP_Users_list.some((element) => element.otp === _otp);
-    console.log(exists);
     if (Boolean(exists)) {
       res.status(200).json({ success: true, message: 'OTP check successful' });
     } else {
@@ -413,7 +410,9 @@ app.post('/api/pr/otp/check', async (req, res) => {
 app.post('/api/setpassword', async (req, res) => {
   const { otp, password } = req.body;
   try {
-    const exists = FP_Users_list.some((element) => element.otp === otp);
+    const _otp = parseInt(otp, 10);
+    console.log(_otp, password)
+    const exists = FP_Users_list.some((element) => element.otp === _otp);
     if (Boolean(exists)) {
       try {
         const hashedPassword = await ConvertToHash(password);
@@ -439,6 +438,9 @@ app.post('/api/setpassword', async (req, res) => {
         console.error("An error occurred:", error);
         res.status(500).json({ success: false, message: 'Internal server error' });
       }
+    }
+    else{
+      res.status(400).json({ success: false, message: 'Invalid code' });
     }
   } catch (error) {
     res.status(500).json({ success: false, message: 'Internal server error' });
