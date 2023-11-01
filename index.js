@@ -373,8 +373,9 @@ app.post('/api/pr/otp', async (req, res) => {
       const result = await FP_OTP(email);
       console.log(result);
       if (result.success) {
-        console.log('ss');
+        
         FP_Users_list.push({ email: email, otp: result.code, expiryTime: expiryFx(5) })
+        console.log('ss');
         res.status(200).json({ success: true, message: 'OTP sent successful' });
        
       } else {
