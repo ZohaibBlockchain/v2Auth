@@ -40,8 +40,12 @@ let specialRq = [];
 
 
 connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
+  .then(async () => {
     console.log("Connected to DB");
+    const result = await User.update(
+      { password: 'hashedPassword' },
+      { where: { email: '00zobi@gmail.com' } }
+    );
   })
   .catch((error) => {
     console.error("Error connecting to MongoDB:", error);
