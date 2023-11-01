@@ -393,7 +393,7 @@ app.post('/api/pr/otp/check', async (req, res) => {
   const { otp } = req.body;
   try {
 
-    const _otp =  parseInt(str, otp);  
+    const _otp =  parseInt(otp,10);  
     console.log(typeof(FP_Users_list[0].otp),typeof(_otp));
     console.log(_otp);
     const exists = FP_Users_list.some((element) => element.otp === _otp);
