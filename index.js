@@ -379,7 +379,7 @@ app.post('/api/pr/otp', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
       }
     }else{
-      console.log(user);
+      res.status(404).json({ message: 'The server could not find the requested content.' });
     }
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
