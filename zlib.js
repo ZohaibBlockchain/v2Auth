@@ -162,5 +162,5 @@ export async function FP_OTP(email) {
 
 
 export function expiryFx(minutes) {
-    return expiryTime = Date.now() + minutes * 60 * 1000;
+    return (Date.now() + minutes * 60 * 1000);
 }
