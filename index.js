@@ -411,9 +411,7 @@ app.post('/api/setpassword', async (req, res) => {
   const { otp, password } = req.body;
   try {
     const _otp = parseInt(otp, 10);
-    console.log(_otp, password)
     const exists = FP_Users_list.find((element) => element.otp === _otp);
-    console.log(exists);
     if (Boolean(exists)) {
       try {
         const hashedPassword = await ConvertToHash(password);
@@ -421,7 +419,6 @@ app.post('/api/setpassword', async (req, res) => {
           { email: exists.email },
           { password: hashedPassword }
         );
-          console.log(result);
         if (result[0] === 0) {
           // No records were updated, handle accordingly
           if (FP_Users_list != undefined) {
