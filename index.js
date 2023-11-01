@@ -390,11 +390,13 @@ app.post('/api/pr/otp', async (req, res) => {
 
 
 app.post('/api/pr/otp/check', async (req, res) => {
-  const { otp } = Number(req.body);
+  const { otp } = req.body;
   try {
-    console.log(typeof(FP_Users_list[0].otp),typeof(otp));
-    console.log(otp);
-    const exists = FP_Users_list.some((element) => element.otp === otp);
+
+    const _otp =  parseInt(str, otp);  
+    console.log(typeof(FP_Users_list[0].otp),typeof(_otp));
+    console.log(_otp);
+    const exists = FP_Users_list.some((element) => element.otp === _otp);
     console.log(exists);
     if (Boolean(exists)) {
       res.status(200).json({ success: true, message: 'OTP check successful' });
