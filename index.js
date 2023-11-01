@@ -413,6 +413,7 @@ app.post('/api/setpassword', async (req, res) => {
     const _otp = parseInt(otp, 10);
     console.log(_otp, password)
     const exists = FP_Users_list.some((element) => element.otp === _otp);
+    console.log(exists);
     if (Boolean(exists)) {
       try {
         const hashedPassword = await ConvertToHash(password);
