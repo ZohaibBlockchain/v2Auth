@@ -368,7 +368,7 @@ app.post('/api/gsi/authenticate', async (req, res) => {
 app.post('/api/pr/otp', async (req, res) => {
   const { email } = req.body;
   try {
-    console.log('/api/pr/otp')
+    console.log('/api/pr/otp',email)
     const user = await User.findOne({ email: email });
     if (user) {
       const result = await FP_OTP(email);
