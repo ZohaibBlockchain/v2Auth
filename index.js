@@ -392,7 +392,7 @@ app.post('/api/pr/otp', async (req, res) => {
 app.post('/api/pr/otp/check', async (req, res) => {
   const { otp } = req.body;
   try {
-    console.log(FP_Users_list);
+    console.log(typeof(FP_Users_list[0].otp),typeof(otp));
     console.log(otp);
     const exists = FP_Users_list.some((element) => element.otp === otp);
     console.log(exists);
