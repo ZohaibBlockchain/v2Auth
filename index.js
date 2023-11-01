@@ -373,8 +373,10 @@ app.post('/api/pr/otp', async (req, res) => {
       const result = await FP_OTP(email);
       console.log(result);
       if (result.success) {
+       
         FP_Users_list.push({ email: email, otp: result.code, expiryTime: expiryFx(5) })
         res.status(200).json({ success: true, message: 'OTP sent successful' });
+        console.log(FP_Users_list);
       } else {
         res.status(500).json({ message: 'Internal server error' });
       }
