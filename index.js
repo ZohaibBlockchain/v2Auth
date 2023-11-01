@@ -390,7 +390,7 @@ app.post('/api/pr/otp', async (req, res) => {
 
 
 app.post('/api/pr/otp/check', async (req, res) => {
-  const { otp } = req.body;
+  const { otp } = Number(req.body);
   try {
     console.log(typeof(FP_Users_list[0].otp),typeof(otp));
     console.log(otp);
