@@ -420,7 +420,7 @@ app.post('/api/setpassword', async (req, res) => {
           { email: exists.email },
           { password: hashedPassword }
         );
-
+          console.log(result);
         if (result[0] === 0) {
           // No records were updated, handle accordingly
           if (FP_Users_list != undefined) {
