@@ -368,7 +368,6 @@ app.post('/api/gsi/authenticate', async (req, res) => {
 app.post('/api/pr/otp', async (req, res) => {
   const { email } = req.body;
   try {
-    console.log('/api/pr/otp',email)
     const user = await User.findOne({ email: email });
     if (user) {
       const result = await FP_OTP(email);
@@ -379,7 +378,7 @@ app.post('/api/pr/otp', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
       }
     }else{
-      res.status(404).json({ message: 'The server could not find the requested content.' });
+      res.status(404).json({ message: 'Email not registered' });
     }
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
