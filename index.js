@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 import cors from 'cors';
 dotenv.config();
 import User from "./formats/usr.js"; // Import the User model
-import { ConvertToHash, Login_Token_Generator, VerifyPassword, check_cred, generateOTP, sendOTPByEmail, FP_OTP, expiryFx, expiryFx } from "./zlib.js";
+import { ConvertToHash, Login_Token_Generator, VerifyPassword, check_cred, generateOTP, sendOTPByEmail, FP_OTP, expiryFx } from "./zlib.js";
 const MONGODB_HOST = process.env.DB_HOST;
 const MONGODB_PORT = process.env.DB_PORT;
 const DATABASE_NAME = process.env.DB_NAME;
