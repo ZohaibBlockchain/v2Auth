@@ -374,6 +374,7 @@ app.post('/api/pr/otp', async (req, res) => {
       if (result.success) {
         FP_Users_list = FP_Users_list.filter(user => user.email !== email);
         FP_Users_list.push({ email: email, otp: result.code, expiryTime: expiryFx(5) })
+        console.log(FP_Users_list);
         res.status(200).json({ success: true, message: 'OTP sent successful' });
       } else {
         res.status(500).json({ message: 'Internal server error' });
@@ -391,6 +392,7 @@ app.post('/api/pr/otp', async (req, res) => {
 app.post('/api/pr/otp/check', async (req, res) => {
   const { otp } = req.body;
   try {
+    console.log(FP_Users_list);
     console.log(otp);
     const exists = FP_Users_list.some((element) => element.otp === otp);
     console.log(exists);
