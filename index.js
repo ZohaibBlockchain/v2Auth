@@ -42,9 +42,9 @@ let specialRq = [];
 connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(async () => {
     console.log("Connected to DB");
-    const result = await User.Update(
-      { password: 'hashedPassword' },
-      { where: { email: '00zobi@gmail.com' } }
+    const result = await User.updateOne(
+      { email: '00zobi@gmail.com' },
+      { password: 'hashedPassword' }
     );
   })
   .catch((error) => {
