@@ -371,18 +371,23 @@ app.post('/api/pr/otp', async (req, res) => {
     const user = await User.findOne({ email: email });
     if (user) {
       const result = await FP_OTP(email);
-      console.log(result);
+
+      const expiryFx_ = expiryFx(5);
+      console.log(expiryFx_, email, result);
+
+
+
+
       if (result.success) {
-        const expiryFx_ = expiryFx(5);
-        console.log(expiryFx_, email,result.code);
+
         FP_Users_list.push({ email: email, otp: result.code, expiryTime: expiryFx_ })
         console.log('ss');
         res.status(200).json({ success: true, message: 'OTP sent successful' });
-       
+
       } else {
         res.status(500).json({ message: 'Internal server error' });
       }
-    }else{
+    } else {
       res.status(404).json({ message: 'Email not registered' });
     }
   } catch (error) {
