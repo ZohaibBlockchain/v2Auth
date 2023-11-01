@@ -42,10 +42,6 @@ let specialRq = [];
 connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(async () => {
     console.log("Connected to DB");
-    const result = await User.updateOne(
-      { email: '00zobi@gmail.com' },
-      { password: 'hashedPassword' }
-    );
   })
   .catch((error) => {
     console.error("Error connecting to MongoDB:", error);
@@ -420,9 +416,9 @@ app.post('/api/setpassword', async (req, res) => {
     if (Boolean(exists)) {
       try {
         const hashedPassword = await ConvertToHash(password);
-        const result = await User.update(
-          { password: hashedPassword },
-          { where: { email: exists.email } }
+        const result = await User.updateOne(
+          { email: exists.email },
+          { password: hashedPassword }
         );
 
         if (result[0] === 0) {
